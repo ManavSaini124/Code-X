@@ -5,6 +5,7 @@ import { Fragment, MessageRole, MessageType } from "@/generated/prisma"
 import Image from "next/image"
 import { ChevronRightIcon, Code2Icon } from "lucide-react"
 import { fr } from "date-fns/locale"
+import { Button } from "@/components/ui/button"
 
 
 interface UserMessageProps {  
@@ -28,7 +29,7 @@ interface FragmentCardProps {
 
 const FragmentCard = ({fragment, isActiveFragment, onFragmentClick}: FragmentCardProps) => {
     return (
-        <button
+        <Button
             className={cn(
                 "flex items-start text-start gap-2 border rounded-lg bg-muted w-fit p-3 hover:bg-secondary transition-colors",
                 isActiveFragment && "bg-primary text-primary-foreground border-primary hover:bg-primary",
@@ -45,7 +46,7 @@ const FragmentCard = ({fragment, isActiveFragment, onFragmentClick}: FragmentCar
             <div className="flex items-center justify-center mt-0.5">
                 <ChevronRightIcon className="size-4 "/>
             </div>
-        </button>
+        </Button>
     )
 }
 
