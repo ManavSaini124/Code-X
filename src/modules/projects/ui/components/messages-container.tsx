@@ -5,6 +5,7 @@ import { MessageForm } from "./message-form"
 import { useEffect, useRef } from "react"
 import { Fragment } from "@/generated/prisma"
 import { MessageLoading } from "./message-loading"
+import { set } from "date-fns"
 
 interface Props {
     projectId: string,
@@ -14,6 +15,7 @@ interface Props {
 
 export const MessagesContainer = ({ projectId, activeFragment, setActiveFragment }: Props) =>{
     const bottomRef = useRef<HTMLDivElement>(null);
+    const lastAssistantMessageIdRef = useRef<string| null>(null);
     const trpc = useTRPC()
     const { data: messages } = useSuspenseQuery(trpc.messages.getMany.queryOptions({
         projectId
@@ -23,9 +25,11 @@ export const MessagesContainer = ({ projectId, activeFragment, setActiveFragment
     }))
 
     useEffect(()=>{
-        const lastMessage = messages.findLast((messages)=> messages.role ==="ASSISTANT" && !!messages.fragment)
-        if(lastMessage && lastMessage.fragment ){
-            setActiveFragment(lastMessage.fragment)
+        const lastAssistantMessage = messages.findLast((message) => message.role === "ASSISTANT");
+
+        if(lastAssistantMessage?.fragment && lastAssistantMessage.id !== lastAssistantMessageIdRef.current){
+            setActiveFragment(lastAssistantMessage.fragment)
+            lastAssistantMessageIdRef.current = lastAssistantMessage.id
         }
     },[messages, setActiveFragment])
 
