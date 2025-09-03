@@ -13,6 +13,7 @@ import { Form, FormField } from "@/components/ui/form"
 import { ArrowUpIcon, Loader2Icon, Section } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { PROJECT_TEMPLATES } from "../../constants"
+import { useClerk } from "@clerk/nextjs"
 
 
 
@@ -27,6 +28,7 @@ export const ProjectForm = () => {
     const trpc = useTRPC();
     const [isFocused, setIsFocused] = useState(false)
     const quearyClient = useQueryClient();
+    const clerk = useClerk()
     
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,6 +48,10 @@ export const ProjectForm = () => {
         onError: (error) => {
             // TODO: Redirect to Pricing page
             toast.error(error.message)
+            if(error.data?.code === "UNAUTHORIZED") {
+                clerk.openSignIn();
+            }
+
         }
     }))
 
