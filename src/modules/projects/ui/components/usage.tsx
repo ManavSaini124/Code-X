@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { formatDuration, intervalToDuration } from "date-fns";
 import { CrownIcon } from "lucide-react";
 import Link from "next/link";
+import { useMemo } from "react";
 
 interface Props {
     points: number,
@@ -14,7 +15,18 @@ interface Props {
 export function Usage({points, msBeforeNext}: Props) {
     const {has} = useAuth();
     const hasPremiumAccess  = has?.({ plan : "pro" });
-
+    const resetTime = useMemo(()=>{
+        try {
+            intervalToDuration({
+                start: new Date(),
+                end: new Date( Date.now() + msBeforeNext)
+            }),
+            { format: ["months","days","hours"] }
+        } catch (error) {
+            console.error("ERROR Formating duration", error);
+            return "";
+        }
+    },[msBeforeNext])
     
     return(
         <div className="rounded-t-xl bg-background border border-b-0 p-2.5">
@@ -24,14 +36,7 @@ export function Usage({points, msBeforeNext}: Props) {
                         {points} credits remaining
                     </p>
                     <p className="text-xs text-muted-foreground">
-                        Resets in{" "}
-                        {formatDuration(
-                            intervalToDuration({
-                                start: new Date(),
-                                end: new Date( Date.now() + msBeforeNext)
-                            }),
-                            { format: ["months","days","hours"] }
-                        )}
+                        Resets in{" "} {resetTime}
                     </p>
                 </div>
                 {!hasPremiumAccess && (
