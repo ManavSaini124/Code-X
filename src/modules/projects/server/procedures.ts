@@ -4,6 +4,7 @@ import { inngest } from "@/inngest/client";
 import { prisma } from "@/lib/db";
 import { protectedProcedure, createTRPCRouter } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
+import { consumeCredits } from "@/lib/usage";
 
 export const projectsRouter = createTRPCRouter({
     create: protectedProcedure
@@ -15,6 +16,24 @@ export const projectsRouter = createTRPCRouter({
             }),
         )
         .mutation(async({input, ctx})=>{
+
+            try{
+                await consumeCredits();
+            }catch(e){
+                if(e instanceof Error){
+                    // something else failed
+                    throw new TRPCError({
+                        code: "BAD_REQUEST",
+                        message: "Something went wrong"
+                    })   
+                } else {
+                    throw new TRPCError({
+                        code: "TOO_MANY_REQUESTS",
+                        message: "Credits exusted"
+                    })
+                }
+            }
+
             const createdProject = await prisma.project.create({
                 data:{
                     userId: ctx.auth.userId, 

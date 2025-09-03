@@ -43,15 +43,16 @@ export const ProjectForm = () => {
                 trpc.projects.getMany.queryOptions()
             );
             router.push(`/projects/${data.id}`)
-            // TODO: Invalidate usage status
+            quearyClient.invalidateQueries(trpc.usage.status.queryOptions());
         },
         onError: (error) => {
-            // TODO: Redirect to Pricing page
             toast.error(error.message)
             if(error.data?.code === "UNAUTHORIZED") {
                 clerk.openSignIn();
             }
-
+            if(error.data?.code === "TOO_MANY_REQUESTS") {
+                router.push("/pricing")
+            }
         }
     }))
 

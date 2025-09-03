@@ -10,6 +10,8 @@ import { useTRPC } from "@/trpc/client"
 import { Button } from "@/components/ui/button"
 import { Form, FormField } from "@/components/ui/form"
 import { ArrowUpIcon, Loader2Icon } from "lucide-react"
+import { Usage } from "./usage"
+import { useRouter } from "next/navigation"
 
 interface Props {
     projectId: string
@@ -23,9 +25,11 @@ const formSchema = z.object({
 
 export const MessageForm = ({ projectId }: Props) => {
     const [isFocused, setIsFocused] = useState(false)
-    const showUsage = false;
     const trpc = useTRPC();
+    const router = useRouter()
     const quearyClient = useQueryClient();
+    const { data: usage } = useQuery(trpc.usage.status.queryOptions());
+    const showUsage = !!usage;
     
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -40,10 +44,14 @@ export const MessageForm = ({ projectId }: Props) => {
             quearyClient.invalidateQueries(
                 trpc.messages.getMany.queryOptions({ projectId })
             );
-            // TODO: Invalidate usage status
+            quearyClient.invalidateQueries(
+                trpc.usage.status.queryOptions()
+            );
         },
         onError: (error) => {
-            // TODO: Redirect to Pricing page
+            if(error.data?.code === "TOO_MANY_REQUESTS"){
+                router.push("/pricing")
+            }
             toast.error(error.message)
         }
     }))
@@ -59,6 +67,11 @@ export const MessageForm = ({ projectId }: Props) => {
     const isButtonDisabled = !form.formState.isValid || isPending;
     return(
         <Form {...form}>
+            {
+                showUsage && (
+                    <Usage points={usage.remainingPoints} msBeforeNext={usage.msBeforeNext}/>
+                )
+            }
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className={cn(
