@@ -1,3 +1,4 @@
+"use client";
 import { SignUp } from '@clerk/nextjs'
 import { useCurrentTheme } from '@/hooks/use-current-theme';
 import { dark } from "@clerk/themes";
