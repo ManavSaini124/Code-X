@@ -4,8 +4,6 @@ import { cn } from "@/lib/utils"
 import { Fragment, MessageRole, MessageType } from "@/generated/prisma"
 import Image from "next/image"
 import { ChevronRightIcon, Code2Icon } from "lucide-react"
-import { fr } from "date-fns/locale"
-import { Button } from "@/components/ui/button"
 
 
 interface UserMessageProps {  

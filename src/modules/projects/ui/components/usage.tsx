@@ -1,8 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
-import { formatDuration, intervalToDuration } from "date-fns";
+import {  intervalToDuration } from "date-fns";
 import { CrownIcon } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
