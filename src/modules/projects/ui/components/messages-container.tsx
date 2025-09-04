@@ -5,7 +5,6 @@ import { MessageForm } from "./message-form"
 import { useEffect, useRef } from "react"
 import { Fragment } from "@/generated/prisma"
 import { MessageLoading } from "./message-loading"
-import { set } from "date-fns"
 
 interface Props {
     projectId: string,

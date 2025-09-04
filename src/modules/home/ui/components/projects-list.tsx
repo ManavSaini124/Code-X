@@ -20,7 +20,7 @@ export const ProjectsList = () =>{
            <h2 className="text-2xl font-semibold">
                 {user?.firstName}&apos;s Projects
             </h2> 
-            <div className="grid grids-cols-1 sm:grig-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {projects?.length === 0 && (
                     <div className="col-span-full text-center">
                         <p className="text-sm text-muted-foreground">
